@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route, Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import './App.css';
@@ -31,12 +31,10 @@ class App extends React.Component {
               id: snapShot.id,
               ...snapShot.data()
             });
-      });
-      this.
-      
-    setCurrentUser(userAuth);
-    }
-  });
+        });
+      }
+      setCurrentUser(userAuth);
+    });
   }
 
   componentWillUnmount() {
@@ -44,6 +42,7 @@ class App extends React.Component {
   }
 
   render() {
+    const { currentUser } = this.props;
     return (
       <div>
         <Header />
@@ -51,7 +50,7 @@ class App extends React.Component {
           <Route exact path='/' component={HomePage}></Route>
           <Route exact path='/shop' component={ShopPage}></Route>
   
-          <Route exact path='/signin' component={SignInAndSignUpPage}></Route>
+          <Route exact path='/signin' render={() => currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage />)}></Route>
   
         </Switch>
   
@@ -60,10 +59,12 @@ class App extends React.Component {
     );
   }
 }
-
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser
+})
 //this is props
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user)) 
 })
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
